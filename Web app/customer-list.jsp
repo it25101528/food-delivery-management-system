@@ -5,15 +5,15 @@
 <html>
 <head>
     <title>Customer Management - FoodHub</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <jsp:include page="../jsp/navbar.jsp" />
+    <jsp:include page="jsp/navbar.jsp" />
 
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h1>Registered Customers</h1>
-            <a href="../mod_delivery/admin-dashboard.jsp" class="btn btn-secondary">← Back to Dashboard</a>
+            <a href="admin-dashboard.jsp" class="btn btn-secondary">← Back to Dashboard</a>
         </div>
 
         <div class="card">
@@ -24,7 +24,6 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th>Type</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -40,17 +39,9 @@
                             <td><%= c.getEmail() %></td>
                             <td><%= c.getPhoneNumber() %></td>
                             <td>
-                                <span style="padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; 
-                                      background: <%= "PREMIUM".equals(c.getUserType()) ? "#fef3c7" : "#f3f4f6" %>; 
-                                      color: <%= "PREMIUM".equals(c.getUserType()) ? "#92400e" : "#374151" %>;">
-                                    <%= c.getUserType() %>
-                                </span>
-                            </td>
-                            <td>
-                                <a href="../user?action=delete&id=<%= c.getUserId() %>" 
-                                   class="btn btn-secondary" 
-                                   style="color: #ef4444; border-color: #fca5a5; padding: 5px 12px; font-size: 12px;"
-                                   onclick="return confirm('Are you sure?')">Delete Account</a>
+                                <a href="user?action=delete&id=<%= c.getUserId() %>" 
+                                   style="color: #ef4444; font-size: 14px; text-decoration: none;"
+                                   onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
                             </td>
                         </tr>
                     <% 
