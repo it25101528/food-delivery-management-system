@@ -1,4 +1,4 @@
-package com.foodhub.mod_billing;
+package com.foodhub.dao;
 
 import com.foodhub.model.Payment;
 import com.foodhub.util.DBConnection;
@@ -22,6 +22,17 @@ public class PaymentDAO {
             return stmt.executeUpdate() > 0;
         }
     }
+    public boolean updatePaymentStatus(int orderId, String status) throws SQLException {
+        ensurePaymentSchema();
+        String sql = "UPDATE payments SET payment_status = ? WHERE order_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, status);
+            stmt.setInt(2, orderId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
 
     public List<Payment> getAllPayments() throws SQLException {
         ensurePaymentSchema();
@@ -31,18 +42,54 @@ public class PaymentDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Payment p = new Payment();
-                p.setPaymentId(rs.getInt("payment_id"));
-                p.setOrderId(rs.getInt("order_id"));
-                p.setPaymentMethod(rs.getString("payment_method"));
-                p.setAmount(rs.getDouble("amount"));
-                p.setPaymentStatus(rs.getString("payment_status"));
-                p.setTransactionId(rs.getString("transaction_id"));
-                p.setPaymentDate(rs.getTimestamp("payment_date"));
-                list.add(p);
+                list.add(createPaymentFromResultSet(rs));
             }
         }
         return list;
+    }
+
+    public List<Payment> getPaymentsByRestaurant(int restaurantId) throws SQLException {
+        ensurePaymentSchema();
+        List<Payment> list = new ArrayList<>();
+        String sql = "SELECT p.* FROM payments p JOIN orders o ON p.order_id = o.order_id WHERE o.restaurant_id = ? ORDER BY p.payment_date DESC";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, restaurantId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(createPaymentFromResultSet(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<Payment> getPaymentsByUser(int userId) throws SQLException {
+        ensurePaymentSchema();
+        List<Payment> list = new ArrayList<>();
+        String sql = "SELECT p.* FROM payments p JOIN orders o ON p.order_id = o.order_id WHERE o.user_id = ? ORDER BY p.payment_date DESC";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(createPaymentFromResultSet(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    private Payment createPaymentFromResultSet(ResultSet rs) throws SQLException {
+        Payment p = new Payment();
+        p.setPaymentId(rs.getInt("payment_id"));
+        p.setOrderId(rs.getInt("order_id"));
+        p.setPaymentMethod(rs.getString("payment_method"));
+        p.setAmount(rs.getDouble("amount"));
+        p.setPaymentStatus(rs.getString("payment_status"));
+        p.setTransactionId(rs.getString("transaction_id"));
+        p.setPaymentDate(rs.getTimestamp("payment_date"));
+        return p;
     }
 
     private void ensurePaymentSchema() throws SQLException {
@@ -78,8 +125,10 @@ public class PaymentDAO {
                     hasPaymentStatus = true;
                 }
                 if (!hasPaymentStatus) {
-                    stmt.executeUpdate("ALTER TABLE payments ADD COLUMN payment_status ENUM('PENDING', 'COMPLETED', 'FAILED') DEFAULT 'PENDING'");
+                    stmt.executeUpdate("ALTER TABLE payments ADD COLUMN payment_status VARCHAR(50) DEFAULT 'PENDING'");
                     hasPaymentStatus = true;
+                } else {
+                    stmt.executeUpdate("ALTER TABLE payments MODIFY COLUMN payment_status VARCHAR(50) DEFAULT 'PENDING'");
                 }
                 if (!hasTransactionId) {
                     stmt.executeUpdate("ALTER TABLE payments ADD COLUMN transaction_id VARCHAR(50)");
