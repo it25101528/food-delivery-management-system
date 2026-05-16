@@ -1,6 +1,8 @@
 package com.foodhub.model;
 
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Order {
     private int orderId;
@@ -10,11 +12,15 @@ public class Order {
     private String orderStatus;
     private String orderType;
     private int deliveryAgentId;
+    private double deliveryCharge;
     private Date orderDate;
+    private List<OrderItem> items = new ArrayList<>();
 
     public Order() {}
 
     // Getters and Setters
+    public List<OrderItem> getItems() { return items; }
+    public void setItems(List<OrderItem> items) { this.items = items; }
     public int getOrderId() { return orderId; }
     public void setOrderId(int orderId) { this.orderId = orderId; }
     public int getUserId() { return userId; }
@@ -31,4 +37,6 @@ public class Order {
     public void setDeliveryAgentId(int deliveryAgentId) { this.deliveryAgentId = deliveryAgentId; }
     public Date getOrderDate() { return orderDate; }
     public void setOrderDate(Date orderDate) { this.orderDate = orderDate; }
+    public double getDeliveryCharge() { return deliveryCharge; }
+    public void setDeliveryCharge(double deliveryCharge) { this.deliveryCharge = deliveryCharge; }
 }
