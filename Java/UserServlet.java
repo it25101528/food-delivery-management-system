@@ -1,5 +1,6 @@
-package com.foodhub.mod_customer;
+package com.foodhub.servlet;
 
+import com.foodhub.dao.UserDAO;
 import com.foodhub.model.User;
 
 import javax.servlet.ServletException;
@@ -32,13 +33,20 @@ public class UserServlet extends HttpServlet {
         try {
             if ("logout".equals(action)) {
                 request.getSession().invalidate();
-                response.sendRedirect("mod_customer/login.jsp");
+                response.sendRedirect("login.jsp");
             } else if ("list".equals(action)) {
                 request.setAttribute("customers", userDAO.getAllCustomers());
-                request.getRequestDispatcher("mod_customer/customer-list.jsp").forward(request, response);
+                request.getRequestDispatcher("customer-list.jsp").forward(request, response);
             } else if ("delete".equals(action)) {
                 userDAO.deleteUser(Integer.parseInt(request.getParameter("id")));
                 response.sendRedirect("user?action=list");
+            } else if ("setLocation".equals(action)) {
+                String location = request.getParameter("location");
+                if (location != null && !location.isEmpty()) {
+                    request.getSession().setAttribute("userLocation", location);
+                }
+                String referer = request.getHeader("Referer");
+                response.sendRedirect(referer != null ? referer : "index.jsp");
             }
         } catch (SQLException e) {
             throw new ServletException(e);
@@ -57,7 +65,15 @@ public class UserServlet extends HttpServlet {
         user.setUserType(request.getParameter("userType"));
         
         userDAO.registerUser(user);
-        response.sendRedirect("mod_customer/login.jsp?msg=Registered successfully");
+        
+        // Redirect to the appropriate login page based on role
+        if ("DRIVER".equals(role)) {
+            response.sendRedirect("driver-login.jsp?msg=Registered successfully! Please login.");
+        } else if ("RESTAURANT".equals(role)) {
+            response.sendRedirect("restaurant-login.jsp?msg=Registered successfully! Please login.");
+        } else {
+            response.sendRedirect("login.jsp?msg=Registered successfully");
+        }
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
@@ -68,20 +84,24 @@ public class UserServlet extends HttpServlet {
             
             // Redirect based on Role
             if ("RESTAURANT".equals(user.getRole())) {
-                response.sendRedirect("mod_restaurant/restaurant-dashboard.jsp");
+                response.sendRedirect("restaurant-dashboard.jsp");
             } else if ("ADMIN".equals(user.getRole())) {
-                response.sendRedirect("mod_delivery/admin-dashboard.jsp");
+                response.sendRedirect("admin-dashboard.jsp");
+            } else if ("DRIVER".equals(user.getRole())) {
+                response.sendRedirect("driver-dashboard.jsp");
             } else {
-                response.sendRedirect("mod_delivery/index.jsp");
+                response.sendRedirect("index.jsp");
             }
         } else {
             request.setAttribute("error", "Invalid email or password");
             // Determine which login page to go back to
             String referer = request.getHeader("Referer");
             if (referer != null && referer.contains("restaurant-login")) {
-                request.getRequestDispatcher("mod_restaurant/restaurant-login.jsp").forward(request, response);
+                request.getRequestDispatcher("restaurant-login.jsp").forward(request, response);
+            } else if (referer != null && referer.contains("driver-login")) {
+                request.getRequestDispatcher("driver-login.jsp").forward(request, response);
             } else {
-                request.getRequestDispatcher("mod_customer/login.jsp").forward(request, response);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         }
     }
@@ -92,6 +112,6 @@ public class UserServlet extends HttpServlet {
         user.setPhoneNumber(request.getParameter("phone"));
         user.setAddress(request.getParameter("address"));
         userDAO.updateUser(user);
-        response.sendRedirect("mod_customer/profile.jsp?msg=Updated");
+        response.sendRedirect("profile.jsp?msg=Updated");
     }
 }
