@@ -1,41 +1,52 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register Agent - FoodHub</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courier Enrolment — FoodHub</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <jsp:include page="../jsp/navbar.jsp" />
+    <jsp:include page="jsp/navbar.jsp" />
 
-    <div class="container" style="max-width: 500px;">
-        <div class="card" style="padding: 40px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h1>Register Agent</h1>
-                <a href="admin-dashboard.jsp" class="btn btn-secondary">Cancel</a>
+    <div class="container" style="padding: 100px 7vw 140px;">
+        <div class="card animate-fadeUp" style="max-width: 600px; margin: 0 auto; border-top: 6px solid var(--brand);">
+            <div style="text-align: center; margin-bottom: 48px;">
+                <div style="font-size: 64px; margin-bottom: 24px;">🛵</div>
+                <h1 class="display-font" style="font-size: 36px;">Courier <em>Enrolment</em></h1>
+                <p class="text-muted">Apply to join our master logistics fleet</p>
             </div>
-
-            <form action="../delivery" method="POST">
+            
+            <form action="delivery" method="POST">
                 <input type="hidden" name="action" value="register">
+                
                 <div class="form-group">
-                    <label>Agent Name</label>
-                    <input type="text" name="name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="text" name="phone" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Vehicle Type</label>
-                    <select name="vehicleType" class="form-control">
-                        <option value="BIKE">Bike (Fast/Small Orders)</option>
-                        <option value="CAR">Car (Large/Premium Orders)</option>
-                    </select>
+                    <label>Legal Identification Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="Full name as on ID" required>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Register Agent</button>
+                <div class="form-group">
+                    <label>Primary Contact (Phone)</label>
+                    <input type="text" name="phone" class="form-control" placeholder="+94 ..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>Logistics Vehicle Selection</label>
+                    <select name="vehicleType" class="form-control">
+                        <option value="BIKE">🏍️ Motorbike (Agile & Swift)</option>
+                        <option value="CAR">🚗 Standard Vehicle (Secure & Large)</option>
+                        <option value="VAN">🚐 Transport Van (Bulk Dispatch)</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 40px;">
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; padding: 18px;">Submit Application</button>
+                </div>
             </form>
         </div>
     </div>
+
+    <jsp:include page="jsp/footer.jsp" />
 </body>
 </html>
