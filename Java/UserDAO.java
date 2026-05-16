@@ -1,11 +1,9 @@
-package com.foodhub.mod_customer;
+package com.foodhub.dao;
 
 import com.foodhub.model.AdminUser;
 import com.foodhub.model.CustomerUser;
 import com.foodhub.model.DriverUser;
 import com.foodhub.model.RestaurantUser;
-import com.foodhub.model.PremiumCustomer;
-import com.foodhub.model.RegularCustomer;
 import com.foodhub.model.User;
 import com.foodhub.util.DBConnection;
 
@@ -105,7 +103,7 @@ public class UserDAO {
             user = new DriverUser();
         } else {
             // It's a Customer
-            user = "PREMIUM".equals(type) ? new PremiumCustomer() : new RegularCustomer();
+            user = new CustomerUser();
         }
 
         user.setUserId(rs.getInt("user_id"));
@@ -117,5 +115,18 @@ public class UserDAO {
         user.setRole(role);
         user.setUserType(type);
         return user;
+    }
+
+    public List<User> getAllDrivers() throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users WHERE role = 'DRIVER'";
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                users.add(createUserFromResultSet(rs));
+            }
+        }
+        return users;
     }
 }
