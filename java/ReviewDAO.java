@@ -1,4 +1,4 @@
-package com.foodhub.mod_billing;
+package com.foodhub.dao;
 
 import com.foodhub.model.Review;
 import com.foodhub.util.DBConnection;
@@ -23,7 +23,9 @@ public class ReviewDAO {
 
     public List<Review> getReviewsByRestaurant(int restaurantId) throws SQLException {
         List<Review> list = new ArrayList<>();
-        String sql = "SELECT * FROM reviews WHERE restaurant_id = ? ORDER BY review_date DESC";
+        String sql = "SELECT r.*, u.name as user_name FROM reviews r " +
+                     "JOIN users u ON r.user_id = u.user_id " +
+                     "WHERE r.restaurant_id = ? ORDER BY r.review_date DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, restaurantId);
@@ -32,6 +34,7 @@ public class ReviewDAO {
                     Review r = new Review();
                     r.setId(rs.getInt("id"));
                     r.setUserId(rs.getInt("user_id"));
+                    r.setUserName(rs.getString("user_name"));
                     r.setRestaurantId(rs.getInt("restaurant_id"));
                     r.setRating(rs.getInt("rating"));
                     r.setComment(rs.getString("comment"));
@@ -41,5 +44,37 @@ public class ReviewDAO {
             }
         }
         return list;
+    }
+
+    public List<Review> getAllReviews() throws SQLException {
+        List<Review> list = new ArrayList<>();
+        String sql = "SELECT r.*, u.name as user_name FROM reviews r " +
+                     "JOIN users u ON r.user_id = u.user_id " +
+                     "ORDER BY r.review_date DESC";
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Review r = new Review();
+                r.setId(rs.getInt("id"));
+                r.setUserId(rs.getInt("user_id"));
+                r.setUserName(rs.getString("user_name"));
+                r.setRestaurantId(rs.getInt("restaurant_id"));
+                r.setRating(rs.getInt("rating"));
+                r.setComment(rs.getString("comment"));
+                r.setReviewDate(rs.getTimestamp("review_date"));
+                list.add(r);
+            }
+        }
+        return list;
+    }
+
+    public boolean deleteReview(int id) throws SQLException {
+        String sql = "DELETE FROM reviews WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        }
     }
 }
