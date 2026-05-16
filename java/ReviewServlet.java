@@ -1,5 +1,6 @@
-package com.foodhub.mod_billing;
+package com.foodhub.servlet;
 
+import com.foodhub.dao.ReviewDAO;
 import com.foodhub.model.Review;
 import com.foodhub.model.User;
 
@@ -19,7 +20,7 @@ public class ReviewServlet extends HttpServlet {
             if ("add".equals(action)) {
                 User user = (User) request.getSession().getAttribute("user");
                 if (user == null) {
-                    response.sendRedirect("mod_customer/login.jsp");
+                    response.sendRedirect("login.jsp");
                     return;
                 }
                 
@@ -31,6 +32,32 @@ public class ReviewServlet extends HttpServlet {
                 
                 reviewDAO.addReview(r);
                 response.sendRedirect("order?action=history");
+            } else if ("delete".equals(action)) {
+                User user = (User) request.getSession().getAttribute("user");
+                if (user == null || !"ADMIN".equals(user.getRole())) {
+                    response.sendRedirect("login.jsp?error=Unauthorized");
+                    return;
+                }
+                int id = Integer.parseInt(request.getParameter("id"));
+                reviewDAO.deleteReview(id);
+                response.sendRedirect("review?action=list");
+            }
+        } catch (SQLException e) {
+            throw new ServletException(e);
+        }
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        try {
+            if ("list".equals(action)) {
+                User user = (User) request.getSession().getAttribute("user");
+                if (user == null || !"ADMIN".equals(user.getRole())) {
+                    response.sendRedirect("login.jsp?error=Unauthorized");
+                    return;
+                }
+                request.setAttribute("reviews", reviewDAO.getAllReviews());
+                request.getRequestDispatcher("review-manage.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             throw new ServletException(e);
