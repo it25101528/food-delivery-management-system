@@ -6,6 +6,7 @@ public class OrderItem {
     private int menuItemId;
     private int quantity;
     private double price;
+    private String itemName;
 
     public OrderItem() {}
 
@@ -27,4 +28,7 @@ public class OrderItem {
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+    
+    public String getItemName() { return itemName; }
+    public void setItemName(String itemName) { this.itemName = itemName; }
 }
