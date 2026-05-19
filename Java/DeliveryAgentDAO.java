@@ -33,11 +33,24 @@ public class DeliveryAgentDAO {
                 }
                 rs.close();
             } catch (SQLException ignore) {}
+
+            // Sync all DRIVER-role users from users table into delivery_agents
+            // so the dispatch dropdown is always populated with registered drivers
+            try {
+                String syncSql = "INSERT INTO delivery_agents (name, phone, vehicle_type, vehicle_number, availability, user_id) " +
+                                 "SELECT name, phone_number, 'Not Specified', '', 1, user_id " +
+                                 "FROM users WHERE role = 'DRIVER' " +
+                                 "AND user_id NOT IN (SELECT COALESCE(user_id, -1) FROM delivery_agents WHERE user_id IS NOT NULL)";
+                stmt.executeUpdate(syncSql);
+            } catch (SQLException e) {
+                System.out.println("[DeliveryAgentDAO] Driver sync warning: " + e.getMessage());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    //insert
     public boolean registerAgent(DeliveryAgent agent) throws SQLException {
         ensureColumns();
         String sql = "INSERT INTO delivery_agents (name, phone, vehicle_type, vehicle_number, availability, user_id) VALUES (?, ?, ?, ?, ?, ?)";
@@ -53,6 +66,7 @@ public class DeliveryAgentDAO {
         }
     }
 
+    //read
     public DeliveryAgent getAgentByUserId(int userId) throws SQLException {
         ensureColumns();
         String sql = "SELECT * FROM delivery_agents WHERE user_id = ?";
@@ -82,6 +96,7 @@ public class DeliveryAgentDAO {
         return null;
     }
 
+    //update
     public boolean updateAgent(DeliveryAgent agent) throws SQLException {
         ensureColumns();
         String sql = "UPDATE delivery_agents SET name=?, phone=?, vehicle_type=?, vehicle_number=?, availability=? WHERE id=?";
@@ -97,6 +112,7 @@ public class DeliveryAgentDAO {
         }
     }
 
+    //read
     public List<DeliveryAgent> getAllAgents() throws SQLException {
         ensureColumns();
         List<DeliveryAgent> list = new ArrayList<>();
