@@ -14,23 +14,25 @@
     
     OrderDAO odao = new OrderDAO();
     UserDAO udao = new UserDAO();
-    List<Order> allAgentOrders = odao.getOrdersByAgent(user.getUserId());
-    
+    DeliveryAgentDAO adao = new DeliveryAgentDAO();
+    DeliveryAgent agent = adao.getAgentByUserId(user.getUserId());
+
     List<Order> activeOrders = new ArrayList<>();
     List<Order> pastOrders = new ArrayList<>();
     double totalEarnings = 0;
-    
-    for (Order o : allAgentOrders) {
-        if ("DELIVERED".equals(o.getOrderStatus())) {
-            pastOrders.add(o);
-            totalEarnings += o.getDeliveryCharge();
-        } else if (!"CANCELLED".equals(o.getOrderStatus())) {
-            activeOrders.add(o);
+
+    if (agent != null) {
+        // IMPORTANT: use agent.getAgentId() — orders store delivery_agents.id, not users.user_id
+        List<Order> allAgentOrders = odao.getOrdersByAgent(agent.getAgentId());
+        for (Order o : allAgentOrders) {
+            if ("DELIVERED".equals(o.getOrderStatus())) {
+                pastOrders.add(o);
+                totalEarnings += o.getDeliveryCharge();
+            } else if (!"CANCELLED".equals(o.getOrderStatus())) {
+                activeOrders.add(o);
+            }
         }
     }
-    
-    DeliveryAgentDAO adao = new DeliveryAgentDAO();
-    DeliveryAgent agent = adao.getAgentByUserId(user.getUserId());
     SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, HH:mm");
 %>
 <!DOCTYPE html>
