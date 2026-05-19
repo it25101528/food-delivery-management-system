@@ -1,0 +1,127 @@
+/* ─── DESIGN SYSTEM (WARM ARTISAN) ─── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+    --brand:       #E8400C;
+    --brand-light: #FFF0EB;
+    --brand-dark:  #B22F06;
+    --ink:         #1A1410;
+    --ink-2:       #5C4E46;
+    --ink-3:       #9E8F88;
+    --surface:     #FDFAF8;
+    --card:        #FFFFFF;
+    --border:      #EDE5DF;
+    --radius-sm:   10px;
+    --radius-md:   18px;
+    --radius-lg:   28px;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body:   'DM Sans', system-ui, sans-serif;
+    --shadow:      0 8px 30px rgba(26,20,16,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-body);
+    background: var(--surface);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 7vw;
+}
+
+/* ─── TYPOGRAPHY ─── */
+h1, h2, h3, .display-font {
+    font-family: var(--font-display);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+}
+
+em {
+    font-style: italic;
+    color: var(--brand);
+}
+
+.text-muted { color: var(--ink-3); }
+
+/* ─── COMPONENTS ─── */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    box-shadow: var(--shadow);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    border-radius: 100px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    border: none;
+    font-size: 15px;
+}
+
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: var(--brand-dark); transform: translateY(-2px); }
+
+.btn-secondary { background: var(--brand-light); color: var(--brand-dark); }
+.btn-secondary:hover { background: #fce7de; }
+
+.btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--ink-2); }
+.btn-ghost:hover { background: #F3EDE8; color: var(--ink); }
+
+/* ─── FORMS ─── */
+.form-group { margin-bottom: 24px; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: var(--ink-2); }
+
+.form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--brand);
+}
+
+/* ─── BADGES ─── */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.badge-green { background: #dcfce7; color: #15803d; }
+.badge-ember { background: var(--brand-light); color: var(--brand-dark); }
+
+/* ─── ANIMATIONS ─── */
+.animate-fadeIn { animation: fadeIn 0.8s ease forwards; }
+.animate-fadeUp { animation: fadeUp 0.8s ease forwards; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── TABLES ─── */
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 16px; border-bottom: 2px solid var(--border); color: var(--ink-3); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 15px; }
