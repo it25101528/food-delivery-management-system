@@ -91,7 +91,7 @@
                 <a href="restaurant?action=list" class="sidebar-link">🍴 Kitchen Network</a>
                 <a href="user?action=list" class="sidebar-link">👥 Citizen Directory</a>
                 <a href="order?action=history" class="sidebar-link">📦 Logistics Flow</a>
-                <a href="review-manage.jsp" class="sidebar-link">⭐ Reviews</a>
+                <a href="review?action=list" class="sidebar-link">⭐ Reviews</a>
             </nav>
             <div style="margin-top: auto; padding-top: 60px;">
                 <a href="user?action=logout" class="sidebar-link" style="color: #ef4444;">🚪 Terminate Session</a>
